@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "url": "https://github.com",
+      "url": "http://jsonplaceholder.typicode.com/posts/1",
       "rule": { "second": [15, 35, 55] },
       "goldwasher": {
         "selector": "h1"

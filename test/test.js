@@ -4,8 +4,10 @@ var test = require('tape');
 var http = require('http');
 var sinon = require('sinon');
 var bunyan = require('bunyan');
+var cs = require('chronostore');
 var fs = require('fs-extra');
 var sitesampler = require('../');
+var through2 = require('through2');
 
 function resetSpies(spiesObject) {
   Object.keys(spiesObject).forEach(function(key) {
@@ -66,7 +68,6 @@ var options = {
     }
   }
 };
-
 
 test('setup', function(t) {
   server = http.createServer(function(request, response) {
@@ -254,7 +255,50 @@ test('it should get targets and write them to disk', function(t) {
   clock.tick(61000);
 });
 
-// teardown, do not place tests after this point.
+test('it throws if chronostore returns an error', function(t) {
+  t.plan(2);
+  var error = new Error('Stubbed error.');
+  var errorStream = function() {
+    return through2.obj(function() {
+      return this.emit('error', error);
+    });
+  };
+
+  sinon.stub(cs, 'writeObject', errorStream);
+
+  var clock = sinon.useFakeTimers();
+  var ss = sitesampler(options).start();
+
+  ss.on('error', function(err) {
+    t.equal(err, error);
+    t.equal(spies.logError.getCall(0).args[1], 'Error when writing results to chronostore for "http://localhost:1337/test".');
+    cs.writeObject.restore();
+    end(t, ss, spies, clock);
+  });
+
+  clock.tick(61000);
+});
+
+
+test('it throws if goldwasher returns an error', function(t) {
+  t.plan(2);
+  var clock = sinon.useFakeTimers();
+  var ss = sitesampler(options);
+  var error = new Error('Stubbed error.');
+
+  sinon.stub(ss.gs, 'start', function() {
+    ss.gs.callback(error);
+  });
+
+  ss.on('error', function(err) {
+    t.equal(err, error);
+    t.equal(spies.logError.getCall(0).args[1], 'Error with results from goldwasher. Aborting write.');
+    end(t, ss, spies, clock);
+  });
+
+  ss.start();
+  clock.tick(61000);
+});
 
 test('teardown', function(t) {
   server.close();
