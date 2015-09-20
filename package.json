@@ -1,7 +1,7 @@
 {
-  "name": "node-sitesampler",
+  "name": "sitesampler",
   "version": "1.0.0",
-  "description": "Sample sites over time.",
+  "description": "Sample website text content over time.",
   "main": "index.js",
   "directories": {
     "test": "test"
