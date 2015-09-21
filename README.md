@@ -4,7 +4,7 @@
 [![Dependency Status](https://david-dm.org/alexlangberg/node-sitesampler.svg)](https://david-dm.org/alexlangberg/node-sitesampler)
 [![devDependency Status](https://david-dm.org/alexlangberg/node-sitesampler/dev-status.svg)](https://david-dm.org/alexlangberg/node-sitesampler#info=devDependencies)
 
-Data collection sometimes includes collecting the same data over time. This module enables you to collect the text content of websites over time and stores them with the [chronostore](https://www.npmjs.com/package/chronostore) module, thus sampling sites. On top of storing the results as files, it also emits the results when collected, enabling you to further process the data, e.g. pushing the data to a database.
+Data collection sometimes includes collecting the same data over time. This module enables you to collect the text content of websites in [goldwasher](https://www.npmjs.com/package/goldwasher) format over time and store them with the [chronostore](https://www.npmjs.com/package/chronostore) module, thus sampling sites. On top of storing the results as files, it also emits the results when collected, enabling you to further process the data, e.g. pushing the data to a database.
 
 A heavy emphasis is put on stability and logging. Everything, even the logging provided by [bunyan](https://www.npmjs.com/package/bunyan), is covered with tests. It also allows you to forward your logging to the console, [loggly](https://www.loggly.com), [logentries](https://logentries.com) and [slack](https://slack.com). 
 
