@@ -48,3 +48,26 @@ ss.on('error', function(error) {
   console.log(error);
 });
 ```
+
+## settings.default.json
+```javascript
+{
+  "targets": [
+    {
+      "url": "http://www.github.com",
+      "rule": { "second": [15, 35, 55] },
+      "goldwasher": {
+        "selector": "h1"
+      }
+    }
+  ],
+  "options": {
+    "goldwasher": {
+      "selector": "h1, h2, h3, h4, h5, h6"
+    },
+    "chronostore": {
+      "root": "./chronostore"
+    }
+  }
+}
+```
