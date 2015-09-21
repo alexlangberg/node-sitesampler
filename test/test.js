@@ -62,10 +62,8 @@ var options = {
       }
     }
   ],
-  'options': {
-    'chronostore': {
-      'root': './testdata'
-    }
+  'chronostore': {
+    'root': './testdata'
   }
 };
 

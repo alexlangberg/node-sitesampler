@@ -22,7 +22,8 @@ When instantiating the sitesampler, it requires settings to work. Settings is th
 ```settings``` (object | string): object with settings or path to settings. Defaults to ```./settings.json```. Properties:
 
 - ```targets``` (object) - an array of targets for the [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) module under the hood.
-- ```options``` (object) - an object where you can add default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) and [chronostore](https://www.npmjs.com/package/chronostore). See example below or ```settings.default.json```.
+- ```options``` (object) - default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule). See example below or ```settings.default.json```.
+- ```chronostore``` (object) - default options that will be passed through to [chronostore](https://www.npmjs.com/package/chronostore).
 
 ### sitesampler.start()
 Starts the sitesampler.
@@ -64,10 +65,11 @@ ss.start();
   "options": {
     "goldwasher": {
       "selector": "h1, h2, h3, h4, h5, h6"
-    },
-    "chronostore": {
-      "root": "./chronostore"
     }
+  },
+  "chronostore": {
+    "root": "./chronostore"
   }
 }
+
 ```
