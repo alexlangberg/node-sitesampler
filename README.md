@@ -38,8 +38,6 @@ Sitesampler is an event emitter that will emit collected results or when an erro
 var sitesampler = require('sitesampler');
 var ss = sitesampler('settings.default.json');
 
-ss.start();
-
 ss.on('results', function(data) {
   console.log(data);
 });
@@ -47,6 +45,8 @@ ss.on('results', function(data) {
 ss.on('error', function(error) {
   console.log(error);
 });
+
+ss.start();
 ```
 
 ## settings.default.json
