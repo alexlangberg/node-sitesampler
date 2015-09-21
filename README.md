@@ -31,7 +31,7 @@ Starts the sitesampler.
 Stops the sitesampler.
 
 ## Events
-Sitesampler is an event emitter that will emit collected results or when an error is encountered. See the example below. Remember to handle errors or your program will crash if an error is encountered.
+Sitesampler is an event emitter that will emit collected results or when an error is encountered. See the example below. Remember to handle errors or your program will crash if an error is encountered. This will, however, usually only happen if you point it at something that isn't HTML.
 
 ## Example
 ```javascript
