@@ -19,9 +19,8 @@ npm install sitesampler
 ### sitesampler(*[settings]*)
 When instantiating the sitesampler, it requires settings to work. Settings is thus either an object or a path to a json file containing the settings.
 
-```settings``` (object | string): object with settings or path to settings. Defaults to ```./settings.json```.
+```settings``` (object | string): object with settings or path to settings. Defaults to ```./settings.json```. Properties:
 
-settings (object | string) defaults to ```./settings.json```:
 - ```targets``` (object) - an array of targets for the [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) module under the hood.
 - ```options``` (object) - an object where you can add default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) and [chronostore](https://www.npmjs.com/package/chronostore). See example below or ```settings.default.json```.
 
