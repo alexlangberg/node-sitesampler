@@ -19,10 +19,10 @@ npm install sitesampler
 ### sitesampler(*[settings]*)
 When instantiating the sitesampler, it requires settings to work. Settings is thus either an object or a path to a json file containing the settings.
 
-```settings``` (object | string): object with settings or path to settings. Defaults to ```./settings.json```. Properties:
+```settings``` (object | string): object with settings or path to settings. Defaults to ```./sitesampler.json```. Properties:
 
 - ```targets``` (object) - an array of targets for the [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) module under the hood.
-- ```options``` (object) - default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule). See example below or ```settings.default.json```.
+- ```options``` (object) - default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule). See example below or ```sitesampler.default.json```.
 - ```chronostore``` (object) - default options that will be passed through to [chronostore](https://www.npmjs.com/package/chronostore).
 
 ### sitesampler.start()
@@ -37,7 +37,7 @@ Sitesampler is an event emitter that will emit collected results or when an erro
 ## Example
 ```javascript
 var sitesampler = require('sitesampler');
-var ss = sitesampler('settings.default.json');
+var ss = sitesampler('sitesampler.default.json');
 
 ss.on('results', function(data) {
   console.log(data);
@@ -50,7 +50,7 @@ ss.on('error', function(error) {
 ss.start();
 ```
 
-## settings.default.json
+## sitesampler.default.json
 ```javascript
 {
   "targets": [

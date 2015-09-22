@@ -200,7 +200,7 @@ test('it can log to slack', function(t) {
   clock.tick(61000);
 });
 
-test('it loads settings.json from disk if no file is provided', function(t) {
+test('it loads sitesampler.json from disk if no file is provided', function(t) {
   t.plan(2);
   var clock = sinon.useFakeTimers();
   var stub = sinon.stub(fs, 'readJsonSync', function() {
@@ -210,7 +210,7 @@ test('it loads settings.json from disk if no file is provided', function(t) {
 
   ss.on('results', function(results) {
     t.equal(1, results.length);
-    t.equals(stub.firstCall.args[0], './settings.json');
+    t.equals(stub.firstCall.args[0], './sitesampler.json');
     fs.readJsonSync.restore();
     end(t, ss, spies, clock);
   });
