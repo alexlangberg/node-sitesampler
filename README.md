@@ -15,6 +15,29 @@ Linted with ESLint, tested with tape and 100% coverage with covert.
 npm install sitesampler
 ```
 
+## Logging
+Logging is performed by bunyan and all logging is enabled with env vars. For instance, to run the example with logging turned on, run the command ```SITESAMPLER_LOG=1 node example.js```.
+
+### loggly
+Logging can be posted to [loggly](https://www.loggly.com) by setting the following env vars:
+
+- ```SITESAMPLER_LOGGLY_SUBDOMAIN```: your loggly subdomain.
+- ```SITESAMPLER_LOGGLY_TOKEN```: your loggly token.
+- ```SITESAMPLER_LOGGLY_LEVEL```: the level to log. Defaults to ```info```.
+
+### logentries
+Logging can be posted to [logentries](https://logentries.com) by setting the following env vars:
+
+- ```SITESAMPLER_LOGENTRIES_TOKEN```: your logentries token.
+
+### slack
+Logging can be posted to [slack](https://slack.com) by setting the following env vars:
+
+- ```SITESAMPLER_SLACK_WEBHOOKURL```: your slack webhook url.
+- ```SITESAMPLER_SLACK_CHANNEL```: your slack channel. Defaults to the channel of the webhook.
+- ```SITESAMPLER_SLACK_LEVEL```: the level to log. Defaults to ```info```.
+- ```SITESAMPLER_SLACK_USERNAME```: the username to post with. Defaults to ```sitesampler```.
+
 ## Methods
 ### sitesampler(*[settings]*)
 When instantiating the sitesampler, it requires settings to work. Settings is thus either an object or a path to a json file containing the settings.
