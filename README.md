@@ -47,6 +47,7 @@ When instantiating the sitesampler, it requires settings to work. Settings is th
 - ```targets``` (object) - an array of targets for the [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule) module under the hood.
 - ```options``` (object) - default options that will be passed through to [goldwasher-schedule](https://www.npmjs.com/package/goldwasher-schedule). See example below or ```sitesampler.default.json```.
 - ```chronostore``` (object) - default options that will be passed through to [chronostore](https://www.npmjs.com/package/chronostore).
+- ```rethrowErrors``` (object) - whether sitesampler should rethrow eerrors from goldwasher and chronostore. Defaults to ```true```.
 
 ### sitesampler.start()
 Starts the sitesampler.
