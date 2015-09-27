@@ -1,6 +1,6 @@
 {
   "name": "sitesampler",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Sample website text content over time.",
   "main": "index.js",
   "directories": {
