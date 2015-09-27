@@ -285,12 +285,12 @@ test('it throws if goldwasher returns an error', function(t) {
   var error = new Error('Stubbed error.');
 
   sinon.stub(ss.gs, 'start', function() {
-    ss.gs.callback(error);
+    ss.gs.callback(error, options.targets[0]);
   });
 
   ss.on('error', function(err) {
     t.equal(err, error);
-    t.equal(spies.logError.getCall(0).args[1], 'Error with results from goldwasher. Aborting write.');
+    t.equal(spies.logError.getCall(0).args[1], 'Error with results from goldwasher for "' + options.targets[0].url + '". Aborting write.');
     end(t, ss, spies, clock);
   });
 
