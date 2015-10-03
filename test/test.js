@@ -117,7 +117,7 @@ test('it can stop', function(t) {
 });
 
 test('it should log', function(t) {
-  t.plan(10);
+  t.plan(14);
   process.env['SITESAMPLER_LOG'] = true;
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
@@ -131,9 +131,13 @@ test('it should log', function(t) {
     t.equal(spies.logInfo.getCall(1).args[0], 'Setting up sitesampler...');
     t.equal(spies.logInfo.getCall(2).args[0], 'Setup completed.');
     t.equal(spies.logInfo.getCall(3).args[0], 'Starting sitesampler.');
-    t.equal(spies.logInfo.getCall(4).args[1], 'Writing results to chronostore...');
-    t.equal(spies.logInfo.getCall(5).args[1], 'Write to chronostore completed.');
-    t.equal(spies.logInfo.getCall(6).args[0], 'Stopping sitesampler.');
+    t.equal(spies.logInfo.getCall(4).args[1], 'Sitesampler running.');
+    t.equal(spies.logInfo.getCall(4).args[0].url, serverUrl);
+    t.equal(spies.logInfo.getCall(6).args[1], 'Result from http://localhost:1337/test in 0 ms.');
+    t.equal(spies.logInfo.getCall(6).args[0].url, serverUrl);
+    t.equal(spies.logInfo.getCall(7).args[1], 'Writing results to chronostore...');
+    t.equal(spies.logInfo.getCall(8).args[1], 'Write to chronostore completed.');
+    t.equal(spies.logInfo.getCall(9).args[0], 'Stopping sitesampler.');
 
     delete process.env['SITESAMPLER_LOG'];
     end(t, ss, spies, clock);
