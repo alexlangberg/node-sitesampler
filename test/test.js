@@ -133,7 +133,7 @@ test('it should log', function(t) {
     t.equal(spies.logInfo.getCall(3).args[0], 'Starting sitesampler.');
     t.equal(spies.logInfo.getCall(4).args[1], 'Sitesampler running.');
     t.equal(spies.logInfo.getCall(4).args[0].url, serverUrl);
-    t.equal(spies.logInfo.getCall(6).args[1], 'Result from http://localhost:1337/test in 0 ms.');
+    t.equal(spies.logInfo.getCall(6).args[1], 'Result from "http://localhost:1337/test".');
     t.equal(spies.logInfo.getCall(6).args[0].url, serverUrl);
     t.equal(spies.logInfo.getCall(7).args[1], 'Writing results to chronostore...');
     t.equal(spies.logInfo.getCall(8).args[1], 'Write to chronostore completed.');
