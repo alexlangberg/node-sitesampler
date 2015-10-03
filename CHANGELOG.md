@@ -6,6 +6,12 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# 2.0.0 (2015-10-03)
+
+## Breaking changes
+
+-- You can no longer define a custom callback, as it no longer made sense.
+
 ### v1.0.0
 
  * Initial commit.

@@ -83,11 +83,12 @@ test('setup', function(t) {
 // setup finished, do not place tests above this line.
 
 test('it should get targets and write them to disk', function(t) {
-  t.plan(1);
+  t.plan(2);
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
+  ss.on('results', function(results, optionsResult) {
+    t.equal(optionsResult.url, options.targets[0].url);
     t.equal(1, results.length);
     end(t, ss, spies, clock);
   });
@@ -116,20 +117,23 @@ test('it can stop', function(t) {
 });
 
 test('it should log', function(t) {
-  t.plan(8);
+  t.plan(10);
   process.env['SITESAMPLER_LOG'] = true;
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
   ss.on('results', function(results) {
+    ss.stop();
     t.equal(1, results.length);
     t.equal(spies.createLogger.getCall(0).args[0].name, 'sitesampler');
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 1);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
     t.equal(spies.logInfo.getCall(1).args[0], 'Setting up sitesampler...');
     t.equal(spies.logInfo.getCall(2).args[0], 'Setup completed.');
-    t.equal(spies.logInfo.getCall(3).args[1], 'Writing results to chronostore...');
-    t.equal(spies.logInfo.getCall(4).args[1], 'Write to chronostore completed.');
+    t.equal(spies.logInfo.getCall(3).args[0], 'Starting sitesampler.');
+    t.equal(spies.logInfo.getCall(4).args[1], 'Writing results to chronostore...');
+    t.equal(spies.logInfo.getCall(5).args[1], 'Write to chronostore completed.');
+    t.equal(spies.logInfo.getCall(6).args[0], 'Stopping sitesampler.');
 
     delete process.env['SITESAMPLER_LOG'];
     end(t, ss, spies, clock);
@@ -285,7 +289,7 @@ test('it throws if goldwasher returns an error', function(t) {
   var error = new Error('Stubbed error.');
 
   sinon.stub(ss.gs, 'start', function() {
-    ss.gs.callback(error, options.targets[0]);
+    ss.gs.emit('error', error, options.targets[0]);
   });
 
   ss.on('error', function(err) {
