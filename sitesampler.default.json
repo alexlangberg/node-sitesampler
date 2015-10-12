@@ -6,7 +6,10 @@
     }
   ],
   "options": {
-    "rule": { "second": [1] }
+    "rule": { "second": [1] },
+    "needleRetry": {
+      "retries": 10
+    }
   },
   "chronostore": {
     "root": "./chronostore"

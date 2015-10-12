@@ -194,7 +194,7 @@ test('it can log to slack', function(t) {
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('response', function(response) {
+  ss.on('response', function() {
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 2);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
 
@@ -241,7 +241,10 @@ test('it should get targets and write them to disk', function(t) {
         'url': serverUrlEmpty,
         'rule': {'second': 1}
       }
-    ]
+    ],
+    'chronostore': {
+      'root': './testdata'
+    }
   };
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
@@ -296,6 +299,35 @@ test('it throws if goldwasher returns an error', function(t) {
   });
 
   ss.start();
+  clock.tick(61000);
+});
+
+test('it can have disk writing disabled', function(t) {
+  t.plan(3);
+  var options = {
+    'targets': [
+      {
+        'url': serverUrl,
+        'rule': {'second': 1}
+      }
+    ]
+  };
+  var clock = sinon.useFakeTimers();
+  var ss = sitesampler(options).start();
+
+  ss.on('response', function(result, response, optionsResult) {
+
+    function explode() {
+      fs.lstatSync('./chronostore');
+    }
+
+    t.throws(explode);
+    t.equal(optionsResult.url, options.targets[0].url);
+    t.true(result.content.indexOf('</h1>') > -1);
+
+    end(t, ss, spies, clock);
+  });
+
   clock.tick(61000);
 });
 
