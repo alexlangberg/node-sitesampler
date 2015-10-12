@@ -2,16 +2,10 @@
   "targets": [
     {
       "url": "http://www.github.com",
-      "rule": { "second": [15, 35, 55] },
-      "goldwasher": {
-        "selector": "h1"
-      }
+      "rule": { "second": [15, 35, 55] }
     }
   ],
   "options": {
-    "goldwasher": {
-      "selector": "h1, h2, h3, h4, h5, h6"
-    },
     "rule": { "second": [1] }
   },
   "chronostore": {

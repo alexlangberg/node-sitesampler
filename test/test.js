@@ -52,14 +52,12 @@ function end(t, ss, spiesObject, clock) {
 
 var server;
 var serverUrl = 'http://localhost:1337/test';
+var serverUrlEmpty = 'http://localhost:1337/empty';
 var options = {
   'targets': [
     {
       'url': serverUrl,
-      'rule': {'second': 1},
-      'goldwasher': {
-        'selector': 'h1'
-      }
+      'rule': {'second': 1}
     }
   ],
   'chronostore': {
@@ -72,6 +70,10 @@ test('setup', function(t) {
     if (request.url === '/test') {
       response.writeHead(200, {'Content-Type': 'text/html'});
       response.end('<h1>foo</h1>');
+    }
+    if (request.url === '/empty') {
+      response.writeHead(200, {'Content-Type': 'text/html'});
+      response.end('');
     }
   }).listen(1337);
 
@@ -87,9 +89,9 @@ test('it should get targets and write them to disk', function(t) {
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results, optionsResult) {
+  ss.on('response', function(result, response, optionsResult) {
     t.equal(optionsResult.url, options.targets[0].url);
-    t.equal(1, results.length);
+    t.true(result.content.indexOf('</h1>') > -1);
     end(t, ss, spies, clock);
   });
 
@@ -102,8 +104,8 @@ test('it can stop', function(t) {
   var ss = sitesampler(options).start();
   var allResults = [];
 
-  ss.on('results', function(results) {
-    allResults.push(results);
+  ss.on('response', function(result) {
+    allResults.push(result);
     ss.stop();
     clock.tick(200000);
   });
@@ -117,14 +119,13 @@ test('it can stop', function(t) {
 });
 
 test('it should log', function(t) {
-  t.plan(14);
+  t.plan(13);
   process.env['SITESAMPLER_LOG'] = true;
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
+  ss.on('response', function() {
     ss.stop();
-    t.equal(1, results.length);
     t.equal(spies.createLogger.getCall(0).args[0].name, 'sitesampler');
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 1);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
@@ -133,9 +134,9 @@ test('it should log', function(t) {
     t.equal(spies.logInfo.getCall(3).args[0], 'Starting sitesampler.');
     t.equal(spies.logInfo.getCall(4).args[1], 'Sitesampler running.');
     t.equal(spies.logInfo.getCall(4).args[0].url, serverUrl);
-    t.equal(spies.logInfo.getCall(6).args[1], 'Result from "http://localhost:1337/test".');
+    t.equal(spies.logInfo.getCall(6).args[1], 'Response from "http://localhost:1337/test".');
     t.equal(spies.logInfo.getCall(6).args[0].url, serverUrl);
-    t.equal(spies.logInfo.getCall(7).args[1], 'Writing results to chronostore...');
+    t.equal(spies.logInfo.getCall(7).args[1], 'Writing result to chronostore...');
     t.equal(spies.logInfo.getCall(8).args[1], 'Write to chronostore completed.');
     t.equal(spies.logInfo.getCall(9).args[0], 'Stopping sitesampler.');
 
@@ -147,15 +148,14 @@ test('it should log', function(t) {
 });
 
 test('it can log to loggly', function(t) {
-  t.plan(3);
+  t.plan(2);
   process.env['SITESAMPLER_LOG'] = true;
   process.env['SITESAMPLER_LOGGLY_TOKEN'] = '00000000-0000-0000-0000-000000000000';
   process.env['SITESAMPLER_LOGGLY_SUBDOMAIN'] = 'foooooobar';
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
-    t.equal(1, results.length);
+  ss.on('response', function() {
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 2);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
 
@@ -169,14 +169,13 @@ test('it can log to loggly', function(t) {
 });
 
 test('it can log to logentries', function(t) {
-  t.plan(3);
+  t.plan(2);
   process.env['SITESAMPLER_LOG'] = true;
   process.env['SITESAMPLER_LOGENTRIES_TOKEN'] = '00000000-0000-0000-0000-000000000000';
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
-    t.equal(1, results.length);
+  ss.on('response', function() {
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 2);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
 
@@ -189,14 +188,13 @@ test('it can log to logentries', function(t) {
 });
 
 test('it can log to slack', function(t) {
-  t.plan(3);
+  t.plan(2);
   process.env['SITESAMPLER_LOG'] = true;
   process.env['SITESAMPLER_SLACK_WEBHOOKURL'] = 'https://foo';
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
-    t.equal(1, results.length);
+  ss.on('response', function(response) {
     t.equal(spies.createLogger.getCall(0).args[0].streams.length, 2);
     t.equal(spies.logInfo.getCall(0).args[0], 'Logging enabled.');
 
@@ -209,15 +207,14 @@ test('it can log to slack', function(t) {
 });
 
 test('it loads sitesampler.json from disk if no file is provided', function(t) {
-  t.plan(2);
+  t.plan(1);
   var clock = sinon.useFakeTimers();
   var stub = sinon.stub(fs, 'readJsonSync', function() {
     return options;
   });
   var ss = sitesampler().start();
 
-  ss.on('results', function(results) {
-    t.equal(1, results.length);
+  ss.on('response', function() {
     t.equals(stub.firstCall.args[0], './sitesampler.json');
     fs.readJsonSync.restore();
     end(t, ss, spies, clock);
@@ -237,24 +234,20 @@ test('it throws if no targets are provided', function(t) {
 });
 
 test('it should get targets and write them to disk', function(t) {
-  t.plan(2);
+  t.plan(1);
   var options = {
     'targets': [
       {
-        'url': serverUrl,
-        'rule': {'second': 1},
-        'goldwasher': {
-          'selector': 'a'
-        }
+        'url': serverUrlEmpty,
+        'rule': {'second': 1}
       }
     ]
   };
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
 
-  ss.on('results', function(results) {
-    t.equal(0, results.length);
-    t.equal(spies.logWarn.getCall(0).args[1], 'No results from goldwasher. Aborting write.');
+  ss.on('response', function() {
+    t.equal(spies.logWarn.getCall(0).args[1], 'No content in result. Aborting write.');
     end(t, ss, spies, clock);
   });
 
@@ -277,7 +270,7 @@ test('it throws if chronostore returns an error', function(t) {
 
   ss.on('error', function(err) {
     t.equal(err, error);
-    t.equal(spies.logError.getCall(0).args[1], 'Error when writing results to chronostore for "http://localhost:1337/test".');
+    t.equal(spies.logError.getCall(0).args[1], 'Error when writing result to chronostore for "http://localhost:1337/test".');
     cs.writeObject.restore();
     end(t, ss, spies, clock);
   });
@@ -292,13 +285,13 @@ test('it throws if goldwasher returns an error', function(t) {
   var ss = sitesampler(options);
   var error = new Error('Stubbed error.');
 
-  sinon.stub(ss.gs, 'start', function() {
-    ss.gs.emit('error', error, options.targets[0], {'start': 0, 'end': 1, 'ms': 1});
+  sinon.stub(ss.ns, 'start', function() {
+    ss.ns.emit('error', error, options.targets[0], {'start': 0, 'end': 1, 'ms': 1});
   });
 
   ss.on('error', function(err) {
     t.equal(err, error);
-    t.equal(spies.logError.getCall(0).args[1], 'Error with results from goldwasher for "' + options.targets[0].url + '". Duration: 1 ms. Aborting write.');
+    t.equal(spies.logError.getCall(0).args[1], 'Error with response from "' + options.targets[0].url + '". Duration: 1 ms.');
     end(t, ss, spies, clock);
   });
 
