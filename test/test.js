@@ -32,7 +32,7 @@ var bunyanStub = {
 };
 
 spies.createLogger = sinon.spy(bunyanStub, 'createLogger');
-sinon.stub(bunyan, 'createLogger', bunyanStub.createLogger);
+sinon.stub(bunyan, 'createLogger').callsFake(bunyanStub.createLogger);
 
 function end(t, ss, spiesObject, clock) {
   if (ss) {
@@ -209,7 +209,7 @@ test('it can log to slack', function(t) {
 test('it loads sitesampler.json from disk if no file is provided', function(t) {
   t.plan(1);
   var clock = sinon.useFakeTimers();
-  var stub = sinon.stub(fs, 'readJsonSync', function() {
+  var stub = sinon.stub(fs, 'readJsonSync').callsFake(function() {
     return options;
   });
   var ss = sitesampler().start();
@@ -266,7 +266,7 @@ test('it throws if chronostore returns an error', function(t) {
     });
   };
 
-  sinon.stub(cs, 'writeObject', errorStream);
+  sinon.stub(cs, 'writeObject').callsFake(errorStream);
 
   var clock = sinon.useFakeTimers();
   var ss = sitesampler(options).start();
@@ -288,7 +288,7 @@ test('it throws if goldwasher returns an error', function(t) {
   var ss = sitesampler(options);
   var error = new Error('Stubbed error.');
 
-  sinon.stub(ss.ns, 'start', function() {
+  sinon.stub(ss.ns, 'start').callsFake(function() {
     ss.ns.emit('error', error, options.targets[0], {'start': 0, 'end': 1, 'ms': 1});
   });
 
